@@ -13,7 +13,7 @@ void main() {
       expect(
         content.contains('android.permission.INTERNET'),
         isFalse,
-        reason: 'Violation of Step 4: Tramessage is strictly offline and must never declare INTERNET permission',
+        reason: 'Violation of Step 4: Nfyra is strictly offline and must never declare INTERNET permission',
       );
 
       // Verify required permissions
@@ -23,3 +23,4 @@ void main() {
     });
   });
 }
+

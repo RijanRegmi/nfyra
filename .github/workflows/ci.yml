@@ -1,4 +1,4 @@
-name: Tramessage CI
+name: Nfyra CI
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         working-directory: mobile
         run: |
           if grep -q "android.permission.INTERNET" android/app/src/main/AndroidManifest.xml; then
-            echo "ERROR: INTERNET permission detected! Tramessage is strictly offline."
+            echo "ERROR: INTERNET permission detected! Nfyra is strictly offline."
             exit 1
           fi
           echo "Verified: No INTERNET permission declared."
@@ -48,3 +48,4 @@ jobs:
       - name: Run Flutter Tests
         working-directory: mobile
         run: flutter test
+

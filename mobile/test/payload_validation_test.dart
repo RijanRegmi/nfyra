@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tramessage/core/error/failures.dart';
-import 'package:tramessage/core/security/keystore_service.dart';
-import 'package:tramessage/core/security/nonce_cache.dart';
-import 'package:tramessage/features/receive/data/repositories/receive_repository_impl.dart';
+import 'package:nfyra/core/error/failures.dart';
+import 'package:nfyra/core/security/keystore_service.dart';
+import 'package:nfyra/core/security/nonce_cache.dart';
+import 'package:nfyra/features/receive/data/repositories/receive_repository_impl.dart';
 
 class MockKeystoreService extends Mock implements KeystoreService {}
 class MockNonceCache extends Mock implements NonceCache {}
@@ -160,3 +160,4 @@ void main() {
     });
   });
 }
+

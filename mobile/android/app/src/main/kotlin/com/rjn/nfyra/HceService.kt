@@ -9,7 +9,7 @@ import java.util.Arrays
 class HceService : HostApduService() {
 
     companion object {
-        private const val TAG = "TramessageHceService"
+        private const val TAG = "NfyraHceService"
 
         // Status words
         private val STATUS_SUCCESS = byteArrayOf(0x90.toByte(), 0x00.toByte())
@@ -27,7 +27,7 @@ class HceService : HostApduService() {
             0xD2.toByte(), 0x76.toByte(), 0x00.toByte(), 0x00.toByte(),
             0x85.toByte(), 0x01.toByte(), 0x00.toByte()
         )
-        // Custom Tramessage AID: F04E464354524D01
+        // Custom Nfyra AID: F04E464354524D01
         private val AID_TRAMESSAGE = byteArrayOf(
             0xF0.toByte(), 0x4E.toByte(), 0x46.toByte(), 0x43.toByte(),
             0x54.toByte(), 0x52.toByte(), 0x4D.toByte(), 0x01.toByte()
@@ -52,7 +52,7 @@ class HceService : HostApduService() {
             0x00
         )
 
-        private const val PREFS_AUTO_SHARE = "tramessage_auto_share"
+        private const val PREFS_AUTO_SHARE = "nfyra_auto_share"
         private const val KEY_AUTO_ENABLED = "auto_share_enabled"
         private const val KEY_AUTO_TYPE = "auto_share_type"
         private const val KEY_AUTO_CONTENT = "auto_share_content"
@@ -110,7 +110,7 @@ class HceService : HostApduService() {
 
         /**
          * Arms the HCE service with a standard universal NDEF message.
-         * Works seamlessly with Android Tag Viewer, iPhone Safari, and Tramessage.
+         * Works seamlessly with Android Tag Viewer, iPhone Safari, and Nfyra.
          */
         fun armPayload(type: String, content: String, rawJsonPayload: String = "") {
             val ndefMessage = buildUniversalNdefMessage(type, content)
@@ -315,3 +315,4 @@ class HceService : HostApduService() {
         selectedFile = null
     }
 }
+

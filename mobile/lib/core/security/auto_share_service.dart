@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 class AutoShareService {
-  static const _channel = MethodChannel('com.tramessage/hce');
+  static const _channel = MethodChannel('com.nfyra/hce');
 
   Future<void> saveAutoShare({
     required String type,
@@ -37,3 +37,4 @@ class AutoShareService {
     return result ?? false;
   }
 }
+

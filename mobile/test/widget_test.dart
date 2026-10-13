@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tramessage/features/nfc_gate/domain/entities/nfc_status_entity.dart';
-import 'package:tramessage/features/nfc_gate/presentation/bloc/nfc_gate_bloc.dart';
-import 'package:tramessage/features/nfc_gate/presentation/screens/nfc_gate_screen.dart';
+import 'package:nfyra/features/nfc_gate/domain/entities/nfc_status_entity.dart';
+import 'package:nfyra/features/nfc_gate/presentation/bloc/nfc_gate_bloc.dart';
+import 'package:nfyra/features/nfc_gate/presentation/screens/nfc_gate_screen.dart';
 
 class MockNfcGateBloc extends Mock implements NfcGateBloc {}
 
@@ -32,3 +32,4 @@ void main() {
     expect(find.text('Open NFC Settings'), findsOneWidget);
   });
 }
+

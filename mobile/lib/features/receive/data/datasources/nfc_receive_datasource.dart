@@ -6,7 +6,7 @@ abstract class NfcReceiveDatasource {
 }
 
 class NfcReceiveDatasourceImpl implements NfcReceiveDatasource {
-  static const _channel = EventChannel('com.tramessage/nfc_receive');
+  static const _channel = EventChannel('com.nfyra/nfc_receive');
 
   @override
   Stream<Map<String, dynamic>> get payloadStream {
@@ -18,3 +18,4 @@ class NfcReceiveDatasourceImpl implements NfcReceiveDatasource {
     });
   }
 }
+

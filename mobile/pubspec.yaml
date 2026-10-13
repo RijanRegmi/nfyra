@@ -1,4 +1,4 @@
-name: tramessage
+name: nfyra
 description: NFC-based offline peer-to-peer message sharing for Android.
 publish_to: 'none'
 version: 1.0.0+1
@@ -65,4 +65,5 @@ flutter:
     - assets/rjn_circle.png
     - assets/branding_light.png
     - assets/branding_dark.png
-    - assets/tramessage.png
+    - assets/nfyra.png
+

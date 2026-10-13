@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 /// On first call, generates an Ed25519 keypair stored in Android Keystore
 /// (StrongBox preferred). The public key is returned as base64.
 class KeystoreService {
-  static const _channel = MethodChannel('com.tramessage/keystore');
+  static const _channel = MethodChannel('com.nfyra/keystore');
   final FlutterSecureStorage _storage = const FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
@@ -69,3 +69,4 @@ class KeystoreService {
     return _storage.readAll();
   }
 }
+

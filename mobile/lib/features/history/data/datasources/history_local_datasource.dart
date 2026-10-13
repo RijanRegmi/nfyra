@@ -10,7 +10,7 @@ abstract class HistoryLocalDatasource {
 }
 
 class HistoryLocalDatasourceImpl implements HistoryLocalDatasource {
-  static const _storageKey = 'tramessage_local_history';
+  static const _storageKey = 'nfyra_local_history';
   final KeystoreService _keystoreService;
 
   HistoryLocalDatasourceImpl(this._keystoreService);
@@ -57,3 +57,4 @@ class HistoryLocalDatasourceImpl implements HistoryLocalDatasource {
     await _keystoreService.secureDelete(_storageKey);
   }
 }
+

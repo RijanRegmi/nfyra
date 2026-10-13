@@ -36,11 +36,11 @@
             </intent-filter>
 
             <!-- NDEF Intent Filters: cold and warm start when receiving NFC touch -->
-            <!-- 1. Tramessage verified MIME type -->
+            <!-- 1. Nfyra verified MIME type -->
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/vnd.tramessage.msg" />
+                <data android:mimeType="application/vnd.nfyra.msg" />
             </intent-filter>
 
             <!-- 2. Standard Plain Text NDEF -->
@@ -83,3 +83,4 @@
         </intent>
     </queries>
 </manifest>
+

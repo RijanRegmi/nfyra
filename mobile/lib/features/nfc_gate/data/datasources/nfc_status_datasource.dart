@@ -19,7 +19,7 @@ class NfcStatus {
 }
 
 class NfcStatusDatasourceImpl implements NfcStatusDatasource {
-  static const _channel = MethodChannel('com.tramessage/nfc_gate');
+  static const _channel = MethodChannel('com.nfyra/nfc_gate');
 
   @override
   Future<NfcStatus> checkStatus() async {
@@ -36,3 +36,4 @@ class NfcStatusDatasourceImpl implements NfcStatusDatasource {
     await _channel.invokeMethod<void>('openNfcSettings');
   }
 }
+

@@ -21,11 +21,11 @@ import java.util.Arrays
 class MainActivity : FlutterFragmentActivity() {
 
     companion object {
-        private const val CHANNEL_HCE = "com.tramessage/hce"
-        private const val CHANNEL_KEYSTORE = "com.tramessage/keystore"
-        private const val CHANNEL_NFC_GATE = "com.tramessage/nfc_gate"
-        private const val CHANNEL_NFC_RECEIVE = "com.tramessage/nfc_receive"
-        private const val TRAMESSAGE_MIME = "application/vnd.tramessage.msg"
+        private const val CHANNEL_HCE = "com.nfyra/hce"
+        private const val CHANNEL_KEYSTORE = "com.nfyra/keystore"
+        private const val CHANNEL_NFC_GATE = "com.nfyra/nfc_gate"
+        private const val CHANNEL_NFC_RECEIVE = "com.nfyra/nfc_receive"
+        private const val TRAMESSAGE_MIME = "application/vnd.nfyra.msg"
     }
 
     private lateinit var keystoreManager: KeystoreManager
@@ -213,16 +213,16 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     /**
-     * Parses NDEF records: prefers the verified Tramessage MIME record,
+     * Parses NDEF records: prefers the verified Nfyra MIME record,
      * or parses standard Text/URI record if sent from standard devices.
      */
     private fun parseNdefMessage(message: NdefMessage): Map<String, Any?>? {
-        var tramessagePayload: Map<String, Any?>? = null
+        var nfyraPayload: Map<String, Any?>? = null
         var fallbackText: String? = null
         var fallbackUri: String? = null
 
         for (record in message.records) {
-            // Check for Tramessage MIME record
+            // Check for Nfyra MIME record
             if (record.tnf == NdefRecord.TNF_MIME_MEDIA) {
                 val mimeType = String(record.type, StandardCharsets.US_ASCII)
                 if (mimeType == TRAMESSAGE_MIME) {
@@ -235,7 +235,7 @@ class MainActivity : FlutterFragmentActivity() {
                             val key = keys.next()
                             map[key] = json.get(key)
                         }
-                        tramessagePayload = map
+                        nfyraPayload = map
                         break
                     } catch (_: Exception) {}
                 }
@@ -271,8 +271,8 @@ class MainActivity : FlutterFragmentActivity() {
             }
         }
 
-        if (tramessagePayload != null) {
-            return tramessagePayload
+        if (nfyraPayload != null) {
+            return nfyraPayload
         }
 
         if (fallbackUri != null) {
@@ -304,3 +304,4 @@ class MainActivity : FlutterFragmentActivity() {
         return null
     }
 }
+

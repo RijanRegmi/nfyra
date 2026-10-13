@@ -17,7 +17,7 @@ class KeystoreManager {
 
     companion object {
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-        private const val KEY_ALIAS = "tramessage_identity_key"
+        private const val KEY_ALIAS = "nfyra_identity_key"
         private const val SIGNATURE_ALGORITHM = "SHA256withECDSA"
     }
 
@@ -102,3 +102,4 @@ class KeystoreManager {
         }
     }
 }
+

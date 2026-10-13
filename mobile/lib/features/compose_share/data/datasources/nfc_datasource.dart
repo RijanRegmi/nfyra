@@ -6,7 +6,7 @@ abstract class NfcDatasource {
 }
 
 class NfcDatasourceImpl implements NfcDatasource {
-  static const _channel = MethodChannel('com.tramessage/hce');
+  static const _channel = MethodChannel('com.nfyra/hce');
 
   NfcDatasourceImpl();
 
@@ -20,3 +20,4 @@ class NfcDatasourceImpl implements NfcDatasource {
     await _channel.invokeMethod<void>('disarmHce');
   }
 }
+
