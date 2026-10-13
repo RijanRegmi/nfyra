@@ -1,0 +1,49 @@
+UPDATE TO THE PROJECT PLAN: Tramessage is now a FULLY OFFLINE, mobile-only app. There is no backend, no database, and no accounts. A partial backend (Node.js, Express, TypeScript) already exists in /backend. Do the following in order, and stop for my confirmation after step 2.
+
+## Step 1: Audit (no changes yet)
+- Inspect the repo and list everything that exists: /backend contents, any Flutter code, .env files, Docker files, CI workflows, and docs.
+- Report which pieces are now obsolete and which are reusable.
+
+## Step 2: Migration plan
+- Propose a short plan to (a) archive the backend on a git branch named `archive/backend-v1` so nothing is lost, then (b) delete /backend, docker-compose, backend CI jobs, .env.example, and all MongoDB, JWT, argon2, and Express references from the main branch.
+- Wait for my confirmation before deleting anything.
+
+## Step 3: New scope (after I confirm)
+Tramessage is Android-only, uses NFC, and works fully offline.
+- Sender: user types a message or https link, taps "Share", and the message is exposed for 30 seconds only (visible countdown, cancel button, wiped after one read or timeout). Optional biometric/device-credential check before arming (on by default).
+- Transfer: a Kotlin HostApduService (HCE) with a custom AID emulates an NFC Forum Type 4 tag holding one NDEF record with MIME type `application/vnd.tramessage.msg`.
+- Receiver: an intent filter on `android.nfc.action.NDEF_DISCOVERED` for that MIME type auto-launches the app and passes the payload to Flutter via MethodChannel/EventChannel. Handle cold start and warm start.
+- NFC gate: on launch check NFC hardware, NFC enabled, and HCE support. If any is missing, show a blocking screen with a button to open NFC settings. The app is unusable without NFC.
+- Payload (versioned JSON, max 1 KB): { v, type, content, createdAt, expiresAt, nonce, senderKeyId, signature }.
+- Signing: each install generates an Ed25519 or ECDSA P-256 keypair in Android Keystore (StrongBox if available). The sender signs, the receiver verifies. Reject expired payloads (>60 s), reused nonces (small persisted cache), oversized or malformed payloads, and unknown versions. Use audited libraries only, never custom crypto.
+- Links: https only, reject javascript:, intent:, file:, data:, strip control characters, never auto-open, show the full URL with an explicit "Open" confirmation. Render text as plain text only.
+- Local data: received and sent history stored locally, encrypted with a Keystore-protected key. Provide "clear all data" and an auto-delete timer. No accounts, no login.
+- Optional: a screen showing the user's key fingerprint so two people can compare it.
+
+## Step 4: Offline security requirements
+- The app must NOT declare the INTERNET permission. Verify this in the merged manifest and add a test or CI check that fails if INTERNET appears.
+- Permissions allowed: NFC and biometric only.
+- android:allowBackup="false", no cleartext traffic config needed, FLAG_SECURE on message screens, R8 and Dart obfuscation in release builds, no sensitive data in logs.
+- Treat all NFC input as untrusted and validate it before touching the UI.
+- Do not add analytics, crash reporters, ads, or any SDK that makes network calls.
+
+## Step 5: Flutter Clean Architecture
+lib/
+  core/          (errors, usecase base, security, constants, theme, di)
+  features/
+    nfc_gate/
+    compose_share/
+    receive/
+    history/     (local only)
+    settings/
+Each feature has data / domain / presentation. Dependencies point inward only. Use flutter_bloc, get_it + injectable, fpdart (Either) for error handling, go_router, and a local encrypted store. Material 3, dark/light theme, accessible, minimal UI.
+
+## Step 6: Quality and docs
+- Unit tests for use cases, payload validation, signature verification, nonce handling, and link sanitizing. Widget tests for key screens. `flutter analyze` must be clean.
+- Replace the old README: setup, architecture diagram, threat model for an offline app, and how to test NFC on two physical Android phones (emulators cannot test NFC).
+- GitHub Actions: analyze, test, build, and the INTERNET-permission check only.
+
+## Rules
+- Ask before adding any dependency or changing the security design.
+- No TODOs, no placeholder secrets, no dead code from the old backend.
+- Show a summary of changes after each step.

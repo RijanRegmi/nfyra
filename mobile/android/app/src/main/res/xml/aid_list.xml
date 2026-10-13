@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/app_name"
+    android:requireDeviceUnlock="false">
+    <aid-group
+        android:category="other"
+        android:description="@string/app_name">
+        <!-- Standard NFC Forum Type 4 Tag v2.0 AID -->
+        <aid-filter android:name="D2760000850101" />
+        <!-- Standard NFC Forum Type 4 Tag v1.0 AID -->
+        <aid-filter android:name="D2760000850100" />
+        <!-- Custom Tramessage AID -->
+        <aid-filter android:name="F04E464354524D01" />
+    </aid-group>
+</host-apdu-service>

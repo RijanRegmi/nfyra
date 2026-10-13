@@ -1,0 +1,68 @@
+name: tramessage
+description: NFC-based offline peer-to-peer message sharing for Android.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_bloc: ^8.1.5
+  equatable: ^2.0.5
+
+  # DI
+  get_it: ^7.6.7
+  injectable: ^2.3.2
+
+  # Functional error handling
+  fpdart: ^1.1.0
+
+  # Navigation
+  go_router: ^13.2.0
+
+  # Local secure storage (Keystore-backed)
+  flutter_secure_storage: ^9.2.2
+
+  # Biometric
+  local_auth: ^2.3.0
+
+  # Crypto (PointyCastle — audited Dart library, Ed25519 + AES-GCM)
+  pointycastle: ^3.9.1
+  convert: ^3.1.1
+
+  # JSON serialization
+  json_annotation: ^4.9.0
+
+  # UUID for nonces
+  uuid: ^4.4.0
+
+  # URL launcher (explicit "Open" confirmation for links)
+  url_launcher: ^6.3.0
+
+  # Intl for date formatting
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.9
+  injectable_generator: ^2.4.1
+  json_serializable: ^6.8.0
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/logo.png
+    - assets/RJN.png
+    - assets/rjn_circle.png
+    - assets/branding_light.png
+    - assets/branding_dark.png
+    - assets/tramessage.png
