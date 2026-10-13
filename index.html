@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tramessage – Zero-Internet NFC Messaging for Android</title>
+  <meta name="description" content="Tramessage lets you share messages and links via NFC tap — no internet, no accounts, no data collection. Fully offline, cryptographically signed, and open source." />
+  <meta property="og:title" content="Tramessage – Zero-Internet NFC Messaging" />
+  <meta property="og:description" content="Share messages and links via NFC tap. No internet, no accounts, no data collection." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0b0f1a; --surface:#111827; --surface2:#1a2235;
+      --border:rgba(99,179,237,0.15); --accent:#63b3ed; --accent2:#76e4f7;
+      --accent3:#b794f4; --green:#68d391; --red:#fc8181;
+      --text:#e2e8f0; --text-muted:#94a3b8; --text-faint:#475569;
+      --radius:16px; --radius-sm:10px; --shadow:0 4px 40px rgba(0,0,0,0.6);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 16px; line-height: 1.75; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 10% -10%, rgba(99,179,237,0.10) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 90% 105%, rgba(183,148,244,0.09) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+    header {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: rgba(11,15,26,0.88); border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0 2rem; height: 68px;
+    }
+    .logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
+    .logo-icon {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; box-shadow: 0 0 20px rgba(99,179,237,0.45);
+    }
+    .logo-name { font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    nav { margin-left: auto; display: flex; align-items: center; gap: 0.25rem; }
+    nav a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      padding: 0.4rem 0.85rem; border-radius: var(--radius-sm);
+      transition: color 0.2s, background 0.2s;
+    }
+    nav a:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--accent), var(--accent3)) !important;
+      color: #0b0f1a !important; font-weight: 700 !important;
+      padding: 0.45rem 1.1rem !important;
+      box-shadow: 0 0 16px rgba(99,179,237,0.35);
+    }
+    .hero {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 7rem 2rem 5rem;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--accent2); background: rgba(118,228,247,0.09); border: 1px solid rgba(118,228,247,0.22);
+      padding: 5px 14px; border-radius: 999px; margin-bottom: 2rem;
+      animation: fadeSlideUp 0.6s ease both;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1;
+      background: linear-gradient(130deg, var(--text) 0%, var(--accent) 55%, var(--accent3) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 1.5rem; animation: fadeSlideUp 0.7s 0.1s ease both;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--text-muted); max-width: 620px;
+      line-height: 1.8; margin-bottom: 2.5rem; animation: fadeSlideUp 0.7s 0.2s ease both;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 3rem; animation: fadeSlideUp 0.7s 0.3s ease both; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: #0b0f1a; font-weight: 700; font-size: 0.95rem;
+      padding: 0.8rem 1.8rem; border-radius: var(--radius-sm); text-decoration: none;
+      box-shadow: 0 0 24px rgba(99,179,237,0.4); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 36px rgba(99,179,237,0.55); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      color: var(--text-muted); font-weight: 500; font-size: 0.95rem;
+      padding: 0.8rem 1.8rem; border-radius: var(--radius-sm); text-decoration: none;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover { color: var(--text); border-color: rgba(99,179,237,0.4); background: rgba(99,179,237,0.06); }
+    .trust-row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: fadeSlideUp 0.7s 0.4s ease both; }
+    .trust-pill {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 5px 12px; border-radius: 999px;
+    }
+    .nfc-visual {
+      position: relative; z-index: 1; max-width: 480px; margin: 4rem auto 6rem;
+      opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s;
+    }
+    .nfc-visual.visible { opacity: 1; transform: translateY(0); }
+    .nfc-phones { display: flex; align-items: center; justify-content: center; }
+    .phone-card {
+      width: 130px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 22px; padding: 1.2rem 0.9rem; text-align: center; box-shadow: var(--shadow); position: relative; z-index: 2;
+    }
+    .phone-card.left { transform: rotate(-6deg) translateX(18px); }
+    .phone-card.right { transform: rotate(6deg) translateX(-18px); }
+    .phone-screen {
+      background: var(--bg); border-radius: 12px; padding: 0.6rem 0.5rem; margin-bottom: 0.5rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--accent2);
+      border: 1px solid rgba(99,179,237,0.12); min-height: 70px;
+      display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3px;
+    }
+    .line.dim { color: var(--text-faint); }
+    .line.green { color: var(--green); }
+    .phone-label { font-size: 0.62rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .nfc-wave { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 80px; height: 80px; z-index: 1; }
+    .wave-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(99,179,237,0.4); animation: waveExpand 2s ease-out infinite; }
+    .wave-ring:nth-child(2) { animation-delay: 0.5s; }
+    .wave-ring:nth-child(3) { animation-delay: 1s; }
+    @keyframes waveExpand { 0%{transform:scale(0.3);opacity:0.8} 100%{transform:scale(2.8);opacity:0} }
+    .section { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 2rem 6rem; }
+    .section-label { text-align: center; margin-bottom: 3.5rem; }
+    .section-tag { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+    .section-title { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; color: var(--text); }
+    .section-sub { font-size: 1rem; color: var(--text-muted); margin-top: 0.7rem; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.75rem; position: relative; overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .feature-card:hover { transform: translateY(-4px); border-color: rgba(99,179,237,0.35); box-shadow: 0 8px 48px rgba(0,0,0,0.5); }
+    .feature-icon { width: 46px; height: 46px; border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .feature-icon.blue { background: rgba(99,179,237,0.12); }
+    .feature-icon.purple { background: rgba(183,148,244,0.12); }
+    .feature-icon.green { background: rgba(104,211,145,0.12); }
+    .feature-icon.cyan { background: rgba(118,228,247,0.12); }
+    .feature-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+    .feature-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step { display: flex; gap: 2rem; padding: 2rem 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .step:last-child { border-bottom: none; }
+    .step-num { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent3)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #0b0f1a; box-shadow: 0 0 20px rgba(99,179,237,0.3); }
+    .step-content h3 { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; }
+    .step-content p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+    .security-strip { position: relative; z-index: 1; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3.5rem 2rem; margin-bottom: 6rem; }
+    .security-inner { max-width: 1100px; margin: 0 auto; }
+    .security-badges { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+    .sec-badge { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.2rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+    .sec-badge-icon { font-size: 1.5rem; }
+    .sec-badge-text strong { display: block; font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .sec-badge-text span { font-size: 0.78rem; color: var(--text-muted); }
+    .perms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .perm-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+    .perm-name { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .perm-why { font-size: 0.75rem; color: var(--text-muted); }
+    .perm-badge { margin-left: auto; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; padding: 2px 8px; border-radius: 999px; }
+    .perm-badge.required { background: rgba(99,179,237,0.12); color: var(--accent); }
+    .perm-badge.none { background: rgba(104,211,145,0.1); color: var(--green); }
+    .cta-banner { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto 6rem; padding: 0 2rem; }
+    .cta-inner {
+      background: linear-gradient(135deg, rgba(99,179,237,0.08) 0%, rgba(183,148,244,0.08) 100%);
+      border: 1px solid rgba(99,179,237,0.2); border-radius: 20px; padding: 3.5rem 2.5rem; text-align: center;
+    }
+    .cta-inner h2 {
+      font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(130deg, var(--text) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.8rem;
+    }
+    .cta-inner p { color: var(--text-muted); margin-bottom: 2rem; }
+    footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .footer-logo { display: flex; align-items: center; gap: 0.5rem; }
+    .footer-logo-icon { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent3)); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .footer-logo-name { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--text-faint); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text-muted); }
+    .footer-copy { font-size: 0.78rem; color: var(--text-faint); }
+    @keyframes fadeSlideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (max-width: 640px) {
+      nav a:not(.nav-cta) { display: none; }
+      .step { flex-direction: column; gap: 1rem; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.82em; color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="/">
+        <div class="logo-icon">📡</div>
+        <span class="logo-name">Tramessage</span>
+      </a>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#security">Security</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="https://github.com/RijanRegmi/nfyra" target="_blank" rel="noopener" class="nav-cta">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-badge"><span class="dot"></span>Open Source · Fully Offline · Android</div>
+    <h1>Tap to share.<br>No internet needed.</h1>
+    <p class="hero-sub">Tramessage turns your phone into an NFC tag. Hold two devices together to instantly share messages or links — with zero data sent over the internet, ever. No accounts, no servers, no surveillance.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/RijanRegmi/nfyra" target="_blank" rel="noopener" class="btn-primary">⬇ View on GitHub</a>
+      <a href="#how-it-works" class="btn-ghost">See how it works →</a>
+    </div>
+    <div class="trust-row">
+      <div class="trust-pill"><span>🚫</span> No internet permission</div>
+      <div class="trust-pill"><span>🔒</span> Hardware-signed messages</div>
+      <div class="trust-pill"><span>📵</span> No receiver app needed</div>
+      <div class="trust-pill"><span>🛡️</span> Anti-replay protected</div>
+    </div>
+  </section>
+
+  <div class="nfc-visual" id="nfcViz">
+    <div class="nfc-phones">
+      <div class="phone-card left">
+        <div class="phone-screen">
+          <span class="line">✉ "Meet me at 5pm"</span>
+          <span class="line dim">Armed · 28s</span>
+          <span class="line green">● HCE Ready</span>
+        </div>
+        <div class="phone-label">Sender</div>
+      </div>
+      <div class="nfc-wave">
+        <div class="wave-ring"></div>
+        <div class="wave-ring"></div>
+        <div class="wave-ring"></div>
+      </div>
+      <div class="phone-card right">
+        <div class="phone-screen">
+          <span class="line green">✔ Verified</span>
+          <span class="line">Ed25519 sig OK</span>
+          <span class="line dim">Nonce: fresh</span>
+        </div>
+        <div class="phone-label">Receiver</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" id="features">
+    <div class="section-label reveal">
+      <span class="section-tag">Features</span>
+      <h2 class="section-title">Privacy-first from the ground up</h2>
+      <p class="section-sub">Every design decision was made to keep your data off the internet and under your control.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon blue">📡</div>
+        <div class="feature-title">No Receiver App Required</div>
+        <p class="feature-desc">Tramessage emulates a standard NFC Forum Type 4 Tag. Any Android or iPhone can receive your message — no app install needed on the other side.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon green">🔒</div>
+        <div class="feature-title">Hardware-Backed Signatures</div>
+        <p class="feature-desc">Every message is signed using an EC key stored in Android Keystore (StrongBox/TEE). Recipients with Tramessage verify it cryptographically in milliseconds.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon purple">⏱️</div>
+        <div class="feature-title">60-Second Expiry</div>
+        <p class="feature-desc">Messages carry a timestamp and auto-expire after 60 seconds. Replay attacks are mathematically impossible thanks to per-message nonces.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon cyan">🚫</div>
+        <div class="feature-title">Zero Internet Permission</div>
+        <p class="feature-desc"><code>INTERNET</code> is strictly omitted from the manifest and validated in CI. The app literally cannot transmit data over Wi-Fi or cellular.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon blue">🔐</div>
+        <div class="feature-title">Encrypted Local History</div>
+        <p class="feature-desc">Received messages are stored in AES-encrypted local storage via Android Keystore. Nothing leaves your device — ever.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon green">🔗</div>
+        <div class="feature-title">Safe URL Handling</div>
+        <p class="feature-desc">Only <code>https://</code> URLs are accepted. Dangerous protocols are stripped. URLs never open automatically — always requiring your explicit confirmation.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works">
+    <div class="section-label reveal">
+      <span class="section-tag">How it works</span>
+      <h2 class="section-title">Simple enough to explain in 4 steps</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Type your message or paste a link</h3>
+          <p>Open Tramessage on your Android device. Type any text or paste an <code>https://</code> URL you want to share with someone nearby.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Tap "Share via NFC" and authenticate</h3>
+          <p>A 30-second countdown begins. Your phone's HCE service arms itself, signing the payload with your hardware-backed key. Biometric authentication is enforced.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Hold both phones back-to-back</h3>
+          <p>The NFC RF touch happens in under a second. No pairing, no Bluetooth, no Wi-Fi. Just physics — radio waves between two devices in close proximity.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Receiver sees the message instantly</h3>
+          <p>With Tramessage: signature is verified, green badge appears, logged to encrypted history. Without the app: Android Tag Viewer or iPhone Safari shows it automatically.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="security-strip" id="security">
+    <div class="security-inner">
+      <div class="reveal" style="margin-bottom:0">
+        <span class="section-tag">Security model</span>
+        <h2 class="section-title">Unconditionally offline.<br>Cryptographically honest.</h2>
+      </div>
+      <div class="security-badges reveal">
+        <div class="sec-badge"><span class="sec-badge-icon">🚫</span><div class="sec-badge-text"><strong>No INTERNET permission</strong><span>Verified in CI on every push</span></div></div>
+        <div class="sec-badge"><span class="sec-badge-icon">🔑</span><div class="sec-badge-text"><strong>Android Keystore keys</strong><span>StrongBox / TEE backed, never exported</span></div></div>
+        <div class="sec-badge"><span class="sec-badge-icon">♻️</span><div class="sec-badge-text"><strong>Memory wiping</strong><span>Payload zeroed on read or timeout</span></div></div>
+        <div class="sec-badge"><span class="sec-badge-icon">🛑</span><div class="sec-badge-text"><strong>Anti-replay nonces</strong><span>LRU cache rejects duplicate payloads</span></div></div>
+        <div class="sec-badge"><span class="sec-badge-icon">🖥️</span><div class="sec-badge-text"><strong>FLAG_SECURE screens</strong><span>Blocks OS screenshots on sensitive views</span></div></div>
+        <div class="sec-badge"><span class="sec-badge-icon">📦</span><div class="sec-badge-text"><strong>Zero telemetry</strong><span>No analytics, crash reporters, or SDKs</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-label reveal">
+      <span class="section-tag">Permissions</span>
+      <h2 class="section-title">Only what NFC physically requires</h2>
+      <p class="section-sub">Tramessage requests the absolute minimum. There is no <code>INTERNET</code> permission — ever.</p>
+    </div>
+    <div class="perms-grid reveal">
+      <div class="perm-row"><span>📡</span><div><div class="perm-name">NFC</div><div class="perm-why">Read/write NFC tags via HCE</div></div><span class="perm-badge required">Required</span></div>
+      <div class="perm-row"><span>👆</span><div><div class="perm-name">Biometric / Fingerprint</div><div class="perm-why">Authenticate before arming HCE</div></div><span class="perm-badge required">Required</span></div>
+      <div class="perm-row"><span>📱</span><div><div class="perm-name">Foreground Service</div><div class="perm-why">Keep HCE alive during 30s countdown</div></div><span class="perm-badge required">Required</span></div>
+      <div class="perm-row"><span>🌐</span><div><div class="perm-name">INTERNET</div><div class="perm-why">Not requested. Never.</div></div><span class="perm-badge none">Not used</span></div>
+    </div>
+  </section>
+
+  <div class="cta-banner">
+    <div class="cta-inner reveal">
+      <h2>Ready to go offline?</h2>
+      <p>Tramessage is open source and free. No sign-up, no subscription, no cloud.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="https://github.com/RijanRegmi/nfyra" target="_blank" rel="noopener" class="btn-primary">View on GitHub ↗</a>
+        <a href="privacy-policy.html" class="btn-ghost">Privacy Policy →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo"><div class="footer-logo-icon">📡</div><span class="footer-logo-name">Tramessage</span></div>
+      <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="https://github.com/RijanRegmi/nfyra" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <span class="footer-copy">© 2025 Tramessage. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    const nfcViz = document.getElementById('nfcViz');
+    obs.observe(nfcViz);
+  </script>
+</body>
+</html>
